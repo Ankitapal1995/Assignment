@@ -1,4 +1,4 @@
-Thank you for giving me the opportunity to solve such an amazing and thought-provoking assignment. Here are the scripts for reproducing the results. For Task 1, all the scripts are provided in the `task1` folder, and for Task 2, the scripts are provided separately in the `task2` folder.
+Thank you for giving me the opportunity to solve such an amazing and thought-provoking assignment. Here are the scripts for reproducing the results. For Task 1, all the scripts are provided in the `TASK1` folder, and for Task 2, the scripts are provided separately in the `TASK2` folder.
 
 For using the scripts inside `TASK1` and `TASK2` <br>
 
@@ -64,4 +64,41 @@ python machine_learning_for_data_with_single_cpg.py PupilBioTest_PMP_revA.csv
 ```bash
 python mean_variant_read_fraction.py cfDNA_data.csv
 python mean_variant_read_fraction.py Islet_data.csv
+```
+
+## TASK 2
+
+### Requirement
+Download `GATK` before proceeding.
+
+### Steps
+
+#### i) Quality Check, Alignment, and BAM File Preparation
+Run the following command:
+```bash
+sh pipeline_for_bam_file.sh --ref <reference.gb> --R1 <reads_1.fastq.gz> --R2 <reads_2.fastq.gz> --prefix <prefix> --output <output_dir>
+```
+
+#### ii) Running Mutect2 and Varscan2
+Use this command to perform mutation calling:
+```bash
+python mutect2_varscan2_mutation_calling.py reference.fasta tumor.bam normal.bam normal_sample_prefix
+```
+
+#### iii) Running In-House Pipeline
+Execute the in-house somatic mutation calling pipeline with the following commands:
+```bash
+python pipeline_for_somatic_mut_calling.py reference.fasta normal.bam tumor.bam
+python identify_cancer_somatic_mutation_cp.py tumor.vcf normal.vcf
+```
+
+#### iv) Background Estimation of GATK Mutect2-Generated Normal Sample VCF File
+Use the following command for background estimation:
+```bash
+python background_estimation_new.py normal_sample_vcf_file total_bases output_prefix
+```
+
+To calculate the total bases, run:
+```bash
+grep -v '^>' GCF_000001405.40_GRCh38.p14_genomic.fna | tr -d '\n' | wc -c
 ```
